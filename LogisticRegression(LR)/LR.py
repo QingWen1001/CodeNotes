@@ -49,18 +49,20 @@ class LogisticRegression():
 
         self.weight = np.random.randn(self.weight_dim,1) # The matrix of weight
     def update_weight(self,delt_weight):
-        self.weight = self.weight - self.learn_rate*delt_weight
-
+        L2 = 2*0.015*self.weight # L2 正则项
+        # print(L2)
+        self.weight = self.weight - self.learn_rate*(delt_weight + L2)
+        #self.weight = self.weight - self.learn_rate * delt_weight
     def GradientDecent(self):
-        y = sigmoid(self.data*self.weight) # 100*3 * 3*1 = 100*1
-        loss = y - self.label.transpose()  # 100*1 - 100*1 = 100*1
-        delt_weight = self.data.transpose()*loss # 3*100 * 100*1 = 3*1
+        y = sigmoid(self.data*self.weight) # dimension 100*3 * 3*1 = 100*1
+        loss = y - self.label.transpose()  # dimension 100*1 - 100*1 = 100*1
+        delt_weight = self.data.transpose()*loss # dimension 3*100 * 100*1 = 3*1
         self.update_weight(delt_weight)
 
     def StochasitcGradientDencent(self,):
         for i in range(self.data_dim):
             y = sigmoid(self.data[i]*self.weight)
-            loss =y - self.label[0,i]
+            loss = y - self.label[0,i]
             delt_weight = loss*self.data[i]
             self.update_weight(delt_weight.transpose())
 
@@ -101,3 +103,4 @@ if __name__ == "__main__":
     for i in range(epoch):
         model.train(Optimization=optimization)
     model.plotFinalGraph()
+    print(model.weight)

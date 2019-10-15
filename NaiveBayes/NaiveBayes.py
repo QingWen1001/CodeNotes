@@ -1,4 +1,4 @@
-from PreprocessText import Preprocess
+from PreprocessText import *
 import readFiles
 import numpy as np
 import pickle
@@ -7,7 +7,7 @@ class NaiveBayes():
     def __init__(self,normal_path,spam_path,stop_words_path):
         self.normal_path = normal_path
         self.spam_path = spam_path
-        self.stop_word_path = stop_words_path
+        self.stop_words = set(readFiles.readline(stop_words_path))
 
     def process_train_file(self,path):
         print("读取地址"+path+'中的文件')
@@ -16,11 +16,11 @@ class NaiveBayes():
         n_file = len(readFiles.get_filename_list(path)) # 获取文件数量
         print('文件读取完毕，开始处理文件！')
 
-        process = Preprocess(text,self.stop_word_path) # PreprocessText对象实例化
-        content = process.for_one_list() # 将所有文件进行预处理，然后合并成一个文件
-        process.statistics(content) # 统计单词的词频和概率
-        word_freq = process.wrod_fraq # 获取单词的词频 返回类型为 {key：value}
-        n_words = process.n_words
+        self.process = BayesPreprocess(text,self.stop_words) # PreprocessText对象实例化
+        content = self.process.for_one_list() # 将所有文件进行预处理，然后合并成一个文件
+        self.process.statistics(content) # 统计单词的词频和概率
+        word_freq = self.process.wrod_fraq # 获取单词的词频 返回类型为 {key：value}
+        n_words = self.process.n_words
         print(path+"文件处理完毕")
         return n_file,word_freq,n_words
     def train(self):
@@ -50,10 +50,73 @@ class NaiveBayes():
             data = pickle.load(f)
             self.normal_prob,self.n_normal_words,self.spam_prob,self.n_spam_words = data[0],data[1],data[2],data[3]
 
-def test_prediction(text, model):
-    text = Preprocess.delet_non_Chinese(text)
-    text = Preprocess.word_segmention(text)
-    bayes_compute(text, model)
+    def test_prediction(self, text):
+        text = delet_non_Chinese(text)
+        text = word_segmention(text,self.stop_words)
+
+        normal_path = self.bayes_compute(text)
+        return normal_path
+    def bayes_compute(self,text):
+
+        word_count = self.counter_word(text)
+        # print(word_count)
+        n_words = self.n_normal_words + self.n_spam_words
+        # print('-'*20+' normal '+'-'*20)
+        prob_normal = self.prob_compute(word_count, self.normal_word_freq, self.normal_prob, n_words)
+        # print('-' * 20 + ' spam ' + '-' * 20)
+        prob_spam = self.prob_compute(word_count, self.spam_word_freq, self.spam_prob, n_words)
+        # print('prob_normal is '+str(prob_normal)+' prob_spam is '+str(prob_spam))
+
+        return prob_normal / (prob_spam + prob_normal)
+    def smoothing_add_one(self):
+        ''' add-one smoothing'''
+    def smoothing_add_k(self):
+        ''' add-k smoothing '''
+    def smoothing_good_turning(self):
+        ''' good-turning smoothing '''
+    def prob_compute(self, word_count, model_word_freq, type_prob, tpye_n_words):
+        prob = 1
+        i = 15
+        '''
+        for w,c in word_count.items():     
+            if w in model_word_freq:
+                print(w,' is ',model_word_freq[w])
+                prob += c*np.log(model_word_freq[w])
+            else:
+                # 此处应使用 smoothing 方法 暂用 0.0001代替未出现的词
+                prob += c*np.log(1/tpye_n_words)
+        '''
+        ''' 统计15个词，最多统计10个字典里有的，剩下的字典里没有的由 smoothing 方法补充'''
+        for w, c in word_count.items():
+            if w in model_word_freq:
+                # print(w, ' is ', model_word_freq[w],' prob is '+str(prob))
+                # prob += c*np.log(model_word_freq[w])
+                prob *= model_word_freq[w] ** c
+                i -= 1
+            if i <= 5: break
+        for w, c in word_count.items():
+            if w not in model_word_freq:
+                # print(w, ' is ', str(1/tpye_n_words), ' prob is ' + str(prob))
+                # prob += c*np.log(1/tpye_n_words)
+                prob *= (1 / tpye_n_words) ** c
+                i -= 1
+            if i == 0: break
+
+        # print('type_prob is ' +str(type_prob))
+        prob *= type_prob
+
+        return prob
+    def counter_word(self, text):
+        ''' 统计单词出现的次数 '''
+        word_count = {}
+        for word in text:
+            if word in word_count:
+                word_count[word] += 1
+            if word not in word_count:
+                word_count[word] = 1
+        return word_count
+
+
 
 def bayes_and_compute(text,model):
     '''
@@ -80,34 +143,6 @@ def bayes_and_compute(text,model):
     prob_t = np.exp(prob_normal)/(np.exp(prob_normal)+np.exp(prob_spam))
     prob_f = np.exp(prob_spam)/(np.exp(prob_normal)+np.exp(prob_spam))
     return  prob_t
-def bayes_compute(text,model):
-    word_count = counter_word(text)
-    prob_normal = prob_compute(word_count,model.normal_word_freq,model.normal_prob,model.n_normal_words)
-    prob_spam = prob_compute(word_count,model.spam_word_freq,model.spam_prob,model.n_spam_words)
-
-    return prob_normal/(prob_spam+prob_normal)
-
-def smoothing_add_one():
-    ''' add-one smoothing'''
-def smoothing_add_k():
-    ''' add-k smoothing '''
-def smoothing_good_turning():
-    ''' good-turning smoothing '''
-
-def prob_compute(word_count,model_word_freq,type_prob,tpye_n_words):
-    prob = 0
-    #i = 0
-    for w,c in word_count.items():
-        if w in model_word_freq:
-            prob += c*np.log(model_word_freq[w])
-        else:
-            # 此处应使用 smoothing 方法 暂用 0.0001代替未出现的词
-            prob += c*np.log(1/tpye_n_words)
-
-    prob += np.log(type_prob)
-
-    return prob
-
 def counter_and_word(text,model_set):
     '''
     用来统计交集单词的次数
@@ -125,15 +160,6 @@ def counter_and_word(text,model_set):
         if word in model_set and word not in same_word_count:
             same_word_count[word] = 1
     return same_word_count
-def counter_word(text):
-    ''' 统计单词出现的次数 '''
-    word_count = {}
-    for word in text:
-        if word in word_count:
-            word_count[word] +=1
-        if word not in word_count:
-            word_count[word] =1
-    return word_count
 
 
 if __name__== "__main__":
@@ -144,35 +170,56 @@ if __name__== "__main__":
 
     # 模型训练
     model = NaiveBayes(normal_path,spam_path,stop_words_path)
-    model.train()
-    model.save()
-    #model.load()
+    #model.train()
+    #model.save()
+    model.load()
     print(model.normal_word_freq)
     print(model.spam_word_freq)
 
     print('开始测试!')
     test_filename_list = readFiles.get_filename_list(test_path)
-    preprocess = Preprocess([1,2] , stop_words_path)
+    #preprocess = Preprocess([1,2] , stop_words_path)
     true = 0
     n_test_files = len(test_filename_list)
+    TP,FP,TN,FN=0,0,0,0
     for name in test_filename_list:
         # 处理文本
         path = test_path + '/' + name
         content = readFiles.read_file(path)
-        content = preprocess.delet_non_Chinese(content)
-        content = preprocess.word_segmention(content)
+        #content = preprocess.delet_non_Chinese(content)
+        #content = preprocess.word_segmention(content)
+
         # 计算概率
-        prob = bayes_compute(content,model)
-        print(name + ' is normal '+str(prob))
-        if int(name)<=1000 and prob > 0.5:
+        prob = model.test_prediction(content)
+        #prob = bayes_compute(content,model)
+        print('The prob of normal for'+name + ' is '+str(prob))
         # 测试样本名字小于1000的是正样本
-            true +=1
-    print("测试完毕，正确率是：")
-    print(true/n_test_files)
+        if int(name)<1000 :
+            if prob > 0.5:
+                TP +=1
+            else:
+                FP +=1
+        else:
+            if prob > 0.5:
+                FN +=1
+            else:
+                TN +=1
 
+    print("测试完毕， 准确率是：" + str((TP+TN)/(TP+TN+FN+FP)))
+    print('精确率'+str(TP/(TP+FP)))
+    print('召回率'+str(TP/(FN+TP)))
 
+'''
+最后实验结果：
 
+准确率是：0.9076923076923077
 
+正样本
+精确率0.844559585492228
+召回率0.9644970414201184
 
+负样本
+精确率0.9695431472081218
+召回率0.8642533936651584
 
-    print()
+'''

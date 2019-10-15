@@ -33,7 +33,3 @@ def get_data_from_document(path):
         content = read_file(file_path)
         text.append(content)
     return text
-
-#if __name__ =="__main__":
-    #print(readline('中文停用词表.txt'))
-    #print(read_file('201'))

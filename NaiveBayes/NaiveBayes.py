@@ -70,7 +70,7 @@ class NaiveBayes():
         else:return 0.4
         # 使用乘法计算时的返回值
         #return prob_normal / (prob_spam + prob_normal)
-    
+
 
     def smoothing_add_one(self):
         ''' add-one smoothing'''

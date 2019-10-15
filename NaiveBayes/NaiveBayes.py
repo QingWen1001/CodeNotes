@@ -59,15 +59,19 @@ class NaiveBayes():
     def bayes_compute(self,text):
 
         word_count = self.counter_word(text)
-        # print(word_count)
-        n_words = self.n_normal_words + self.n_spam_words
-        # print('-'*20+' normal '+'-'*20)
-        prob_normal = self.prob_compute(word_count, self.normal_word_freq, self.normal_prob, n_words)
-        # print('-' * 20 + ' spam ' + '-' * 20)
-        prob_spam = self.prob_compute(word_count, self.spam_word_freq, self.spam_prob, n_words)
-        # print('prob_normal is '+str(prob_normal)+' prob_spam is '+str(prob_spam))
 
-        return prob_normal / (prob_spam + prob_normal)
+        n_words = self.n_normal_words + self.n_spam_words
+
+        prob_normal = self.prob_compute(word_count, self.normal_word_freq, self.normal_prob, n_words)
+        prob_spam = self.prob_compute(word_count, self.spam_word_freq, self.spam_prob, n_words)
+        #使用 log 方法时的返回值
+        prob = prob_normal - prob_spam
+        if prob >0:return 0.6
+        else:return 0.4
+        # 使用乘法计算时的返回值
+        #return prob_normal / (prob_spam + prob_normal)
+    
+
     def smoothing_add_one(self):
         ''' add-one smoothing'''
     def smoothing_add_k(self):
@@ -90,21 +94,21 @@ class NaiveBayes():
         for w, c in word_count.items():
             if w in model_word_freq:
                 # print(w, ' is ', model_word_freq[w],' prob is '+str(prob))
-                # prob += c*np.log(model_word_freq[w])
-                prob *= model_word_freq[w] ** c
+                prob += c*np.log(model_word_freq[w])
+                #prob *= model_word_freq[w] ** c
                 i -= 1
             if i <= 5: break
         for w, c in word_count.items():
             if w not in model_word_freq:
                 # print(w, ' is ', str(1/tpye_n_words), ' prob is ' + str(prob))
-                # prob += c*np.log(1/tpye_n_words)
-                prob *= (1 / tpye_n_words) ** c
+                prob += c*np.log(1/tpye_n_words)
+                #prob *= (1 / tpye_n_words) ** c
                 i -= 1
             if i == 0: break
 
         # print('type_prob is ' +str(type_prob))
-        prob *= type_prob
-
+        #prob *= type_prob
+        prob += np.log(type_prob)
         return prob
     def counter_word(self, text):
         ''' 统计单词出现的次数 '''
@@ -117,22 +121,19 @@ class NaiveBayes():
         return word_count
 
 
-
+'''
 def bayes_and_compute(text,model):
-    '''
-    本方法希望通过计算样本文本中的词与训练数据词典的交集来进行计算。
-    目的是为了避免训练集未出现的新词似的概率为 0
-    1、文本与正文本数据集的交集 计算 正文本的数据
-    2、文本与负文本数据集的交集 计算 负文本的数据集
-    3、交集可能是空集，所以结果做softmax
-
-    问题：
-    1、交集的大小不一致，没有比较的基础
-    2、交集可能为 0
-    :param text:
-    :param model:
-    :return:
-    '''
+    
+    #本方法希望通过计算样本文本中的词与训练数据词典的交集来进行计算。
+    #目的是为了避免训练集未出现的新词似的概率为 0
+    #1、文本与正文本数据集的交集 计算 正文本的数据
+    #2、文本与负文本数据集的交集 计算 负文本的数据集
+    #3、交集可能是空集，所以结果做softmax
+    #问题：
+    #1、交集的大小不一致，没有比较的基础
+    #2、交集可能为 0
+    
+    
     # 统计文本中 与 正\负 文本数据集 交集
     normal_word_count = counter_and_word(text, set(model.normal_word_freq))
     spam_word_count = counter_and_word(text, set(model.spam_word_freq))
@@ -144,12 +145,9 @@ def bayes_and_compute(text,model):
     prob_f = np.exp(prob_spam)/(np.exp(prob_normal)+np.exp(prob_spam))
     return  prob_t
 def counter_and_word(text,model_set):
-    '''
-    用来统计交集单词的次数
-    :param text:
-    :param model_set:
-    :return:
-    '''
+    
+    #用来统计交集单词的次数
+  
     vocab = set(text)
     same_word_vocab = vocab & model_set
     same_word_count = {}
@@ -160,7 +158,7 @@ def counter_and_word(text,model_set):
         if word in model_set and word not in same_word_count:
             same_word_count[word] = 1
     return same_word_count
-
+'''
 
 if __name__== "__main__":
     stop_words_path = './data/中文停用词表.txt'

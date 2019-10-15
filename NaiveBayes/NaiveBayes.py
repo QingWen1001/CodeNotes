@@ -1,6 +1,7 @@
 from PreprocessText import Preprocess
 import readFiles
 import numpy as np
+import pickle
 from collections import Counter
 class NaiveBayes():
     def __init__(self,normal_path,spam_path,stop_words_path):
@@ -30,24 +31,27 @@ class NaiveBayes():
         self.spam_prob = n_spam/(n_normal + n_spam)
         print('模型训练完毕！')
     def save(self):
-        with open("model_normal_freq",'w') as f:
-            f.write(str(self.normal_word_freq))
-        with open("model_spam_freq", 'w') as f:
-            f.write(str(self.spam_word_freq))
-        with open("model_prob", 'w') as f:
-            f.write([self.normal_prob,self.spam_prob])
+        with open("./model/model_normal_freq.pickle",'wb') as f:
+            pickle.dump(self.normal_word_freq,f)
+
+        with open("./model/model_spam_freq.pickle", 'wb') as f:
+            pickle.dump(self.spam_word_freq, f)
+
+        with open("./model/model_prob.pickle", 'wb') as f:
+            pickle.dump([self.normal_prob,self.spam_prob], f)
+
     def load(self):
-        with open("model_normal_freq") as f:
-            self.normal_word_freq = f.read()
-        with open("model_spam_freq") as f:
-            self.normal_word_freq = f.read()
-        with open("model_prob") as f:
-            data = f.read()
-            self.normal_prob,self.spam_prob = data[1],data[2]
-def test_prediction(text,model):
+        with open("./model/model_normal_freq.pickle",'rb') as f:
+            self.normal_word_freq = pickle.load(f)
+        with open("./model/model_spam_freq.pickle",'rb') as f:
+            self.spam_word_freq = pickle.load(f)
+        with open("./model/model_prob.pickle",'rb') as f:
+            data = pickle.load(f)
+            self.normal_prob,self.spam_prob = data[0],data[1]
+def test_prediction(text, model):
     text = Preprocess.delet_non_Chinese(text)
     text = Preprocess.word_segmention(text)
-    bayes_compute(text,model)
+    bayes_compute(text, model)
 
 
 def bayes_compute(text,model):
@@ -55,13 +59,22 @@ def bayes_compute(text,model):
     spam_word_count = counter_word(text, set(model.spam_word_freq))
     prob_normal = prob_compute(normal_word_count,model.normal_word_freq,model.normal_prob)
     prob_spam = prob_compute(spam_word_count,model.spam_word_freq,model.spam_prob)
-    return  float(prob_normal/prob_spam)
+    prob_t = np.exp(prob_normal)/(np.exp(prob_normal)+np.exp(prob_spam))
+    prob_f = np.exp(prob_spam)/(np.exp(prob_normal)+np.exp(prob_spam))
+    return  prob_t
 
 def prob_compute(word_count,model_word_freq,type_prob):
     prob = 0
-    for w,c in word_count:
+    i = 0
+    for w,c in word_count.items():
+        #print(w,c)
         prob += c*np.log(model_word_freq[w])
+
+        i +=1
+        if i>=5:
+            break
     prob += np.log(type_prob)
+
     return prob
 
 def counter_word(text,model_set):
@@ -69,11 +82,15 @@ def counter_word(text,model_set):
     same_word_vocab = vocab & model_set
     same_word_count = {}
     for word in text:
-        if word in model_set and word in same_word_vocab:
+        if word in model_set and word in same_word_count:
+            #print(same_word_count)
             same_word_count[word] += 1
-        if word in model_set and word not in same_word_vocab:
+        if word in model_set and word not in same_word_count:
             same_word_count[word] = 1
     return same_word_count
+
+#def softmax():
+
 
 if __name__== "__main__":
     stop_words_path = './data/中文停用词表.txt'
@@ -81,22 +98,30 @@ if __name__== "__main__":
     spam_path = './data/spam'
     test_path = './data/test'
 
+    # 模型训练
     model = NaiveBayes(normal_path,spam_path,stop_words_path)
-    model.train()
+    #model.train()
     #model.save()
-    #model.load()
+    model.load()
+    print(model.normal_word_freq)
+    print(model.spam_word_freq)
+
     print('开始测试!')
     test_filename_list = readFiles.get_filename_list(test_path)
     preprocess = Preprocess([1,2] , stop_words_path)
     true = 0
     n_test_files = len(test_filename_list)
     for name in test_filename_list:
+        # 处理文本
         path = test_path + '/' + name
         content = readFiles.read_file(path)
         content = preprocess.delet_non_Chinese(content)
         content = preprocess.word_segmention(content)
+        # 计算概率
         prob = bayes_compute(content,model)
+        print(name + ' is normal '+str(prob))
         if int(name)<=1000 and prob > 0.5:
+        # 测试样本名字小于1000的是正样本
             true +=1
     print("测试完毕，正确率是：")
     print(true/n_test_files)

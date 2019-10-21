@@ -150,7 +150,7 @@ class HMM():
             id = self.word2id[word]
             return self.B[:,id]
         else:
-            return np.ones(self.n_state,1)
+            return np.ones(self.n_state,1) # 认为所有状态发射当前词的概率都是1
 if __name__=='__main__':
     data_path ="train_data.txt"
     data_list,label_list = load_data(data_path)

@@ -22,7 +22,7 @@
 ## PyTorch
 pytorch学习笔记，使用PyTorch复现一些经典的深度学习算法。
 - 1.pytorch 简介
--- 介绍了 tensor 的使用方法，numpy 与 tensor 之间的转换
+--- 介绍了 tensor 的使用方法，numpy 与 tensor 之间的转换
 -- CUDA 调用 GPU 进行计算的方式
 -- 使用 numpy 构建简单的神经网络并训练
 -- 通过一步一步的改进，将 numpy 构建的神经网络改进成使用 pytorch 构建的神经网络

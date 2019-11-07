@@ -21,17 +21,17 @@
 - sklearn 工具的 CRF 模型的使用
 ## PyTorch
 pytorch学习笔记，使用PyTorch复现一些经典的深度学习算法。
-- 1.pytorch 简介
---- 介绍了 tensor 的使用方法，numpy 与 tensor 之间的转换
--- CUDA 调用 GPU 进行计算的方式
--- 使用 numpy 构建简单的神经网络并训练
--- 通过一步一步的改进，将 numpy 构建的神经网络改进成使用 pytorch 构建的神经网络
--- 学习如何使用 pytorch 自定义一个神经网络模型。
-- 2.word-embedding
--- 2.0 word-embedding 使用 pytorch 复现了使用 skip-gram 方法进行 word2vec 计算的模型。
-- 3.LSTM
--- 3.0 LSTM model ：使用pytorch 复现了 LSTM 模型
--- 3.1 RNN-LSTM-GRU-model ：使用pytorch复现了 LSTM RNN GRU 模型
-- 4.Sentiment
--- 使用 Word Averaging 模型，LSTM 模型进行情感计算，主要流程是先获得句子的向量表示，在使用 linear 层进行分类。
--- Text CNN 进行情感计算更新中...
+### 1.pytorch 简介
+- 介绍了 tensor 的使用方法，numpy 与 tensor 之间的转换
+- CUDA 调用 GPU 进行计算的方式
+- 使用 numpy 构建简单的神经网络并训练
+- 通过一步一步的改进，将 numpy 构建的神经网络改进成使用 pytorch 构建的神经网络
+- 学习如何使用 pytorch 自定义一个神经网络模型。
+### 2.word-embedding
+- 2.0 word-embedding 使用 pytorch 复现了使用 skip-gram 方法进行 word2vec 计算的模型。
+### 3.LSTM
+- 3.0 LSTM model ：使用pytorch 复现了 LSTM 模型
+- 3.1 RNN-LSTM-GRU-model ：使用pytorch复现了 LSTM RNN GRU 模型
+### 4.Sentiment
+- 使用 Word Averaging 模型，LSTM 模型进行情感计算，主要流程是先获得句子的向量表示，在使用 linear 层进行分类。
+- Text CNN 进行情感计算更新中...

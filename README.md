@@ -34,4 +34,4 @@ pytorch学习笔记，使用PyTorch复现一些经典的深度学习算法。
 - 3.1 RNN-LSTM-GRU-model ：使用pytorch复现了 LSTM RNN GRU 模型
 ### 4.Sentiment
 - 使用 Word Averaging 模型，LSTM 模型进行情感计算，主要流程是先获得句子的向量表示，在使用 linear 层进行分类。
-- Text CNN 进行情感计算更新中...
+- Text CNN 模型： 通过句子的词向量进行排列，组成类似图像的矩阵，然后使用 filter 进行卷积计算，可以很好的将不同的长度的句子处理成相同长度。

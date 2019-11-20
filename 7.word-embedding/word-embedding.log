@@ -1,0 +1,10 @@
+epoch: 0, iter: 0, loss: 420.04730224609375
+epoch: 0, iter: 0, loss: 420.0469970703125
+epoch: 0, iter: 0, loss: 420.0462646484375
+epoch: 0, iteration: 0, simlex-999: SpearmanrResult(correlation=-0.0349691067019831, pvalue=0.2805873209768045), men: SpearmanrResult(correlation=-0.03489702195946241, pvalue=0.07624244424268797), sim353: SpearmanrResult(correlation=0.05044714668473586, pvalue=0.3691590092035991), nearest to monster: ['monster', 'hydrology', 'fork', 'diocletian', 'grassland', 'dynamic', 'fatalities', 'assigns', 'olympian', 'iv']
+epoch: 0, iter: 100, loss: 257.77630615234375
+epoch: 0, iter: 200, loss: 204.79653930664062
+epoch: 0, iter: 300, loss: 174.65139770507812
+epoch: 0, iter: 400, loss: 154.20016479492188
+epoch: 0, iter: 500, loss: 137.98117065429688
+epoch: 0, iter: 600, loss: 126.121826171875

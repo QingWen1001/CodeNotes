@@ -19,21 +19,27 @@
 - HMM在实现过程中的一些问题的总结：在模型复现的过程中 对于未出现字的处理，HMM 模型的缺点。
 
 ### 4. SupportVectorMachine(SVM)
+- SVM：转载 SVM python 复现
+- LinearSVM：pytorch 复现
+- SVM VS LR ：分析比较了 LR 和 SVM 的相同点和不同点
+- SVM 原理及公式推导：介绍了SVM的原理和公式推导
 ### 5. CRF
 - sklearn 工具的 CRF 模型的使用
 ## PyTorch
 pytorch学习笔记，使用PyTorch复现一些经典的深度学习算法。
-### 1.双层神经网络
+### 6.双层神经网络
 - 介绍了 tensor 的使用方法，numpy 与 tensor 之间的转换
 - CUDA 调用 GPU 进行计算的方式
 - 使用 numpy 构建简单的神经网络并训练
 - 通过一步一步的改进，将 numpy 构建的神经网络改进成使用 pytorch 构建的神经网络
 - 学习如何使用 pytorch 自定义一个神经网络模型。
-### 2.word-embedding
+### 7.word-embedding
 - 2.0 word-embedding 使用 pytorch 复现了使用 skip-gram 方法进行 word2vec 计算的模型。
-### 3.LSTM
+### 8.LSTM
 - 3.0 LSTM model ：使用pytorch 复现了 LSTM 模型
 - 3.1 RNN-LSTM-GRU-model ：使用pytorch复现了 LSTM RNN GRU 模型
-### 4.Sentiment
+### 9.Sentiment
 - 使用 Word Averaging 模型，LSTM 模型进行情感计算，主要流程是先获得句子的向量表示，在使用 linear 层进行分类。
 - Text CNN 模型： 通过句子的词向量进行排列，组成类似图像的矩阵，然后使用 filter 进行卷积计算，可以很好的将不同的长度的句子处理成相同长度。
+### 10.CNN
+- CNN-Image-Classification ：使用pytorch复现CNN模型做图片分类

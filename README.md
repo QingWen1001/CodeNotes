@@ -44,3 +44,5 @@ pytorch学习笔记，使用PyTorch复现一些经典的深度学习算法。
 ### 10.CNN
 - CNN-Image-Classification ：使用pytorch复现CNN模型做图片分类
 - 迁移学习-以CNN为例子：通过使用 resnet 预训练模型做迁移学习的训练，比较的 fine trin 与 feature extract 之间的效果对比，对于两种方式的选择主要取决于数据量的大小和训练数据与预训练模型数据之间的相关性
+### 11.Seq2Seq + attention 
+- Seq2Seq + attention :使用 GRU 实现了简单的 Seq2Seq 模型，然后使用 Bi-GRU + Attention 实现了 Seq2Seq + Attention 模型。

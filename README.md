@@ -1,7 +1,7 @@
 # Code Notes
 项目中复现了一些经典的机器学习算法，并通过简单的任务展示了算法或模型的效果。在一些算法或模型的复现的过程中，一些模型的对比总结，公式推导，数学原理也存在了项目文件夹中。
-主要工具：pycharm，jupyter notebook，pytorch
-以下是项目的目录。项目持续更新中...
+主要工具：pycharm，jupyter notebook，pytorch.
+以下是项目的目录,项目持续更新中...
 ### 1. LogisticRegression（LR）
 - LR 逻辑回归的复现
 - Logistic Regression Summery 总结了逻辑回归、线性回归的数学原理公式推导，比较了两种方法的异同和特点，介绍了决策边界、代价函数、优化方法和正则项的引入。
